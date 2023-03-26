@@ -7,7 +7,7 @@ from .models import Building,Elevator,ElevatorRequest
 
 class BuildingSerializer(serializers.ModelSerializer):
   '''
-  Model serializer for model ElevatorSystem
+  Model serializer for model Building
   '''
   class Meta:
     model = Building

@@ -20,8 +20,8 @@ class Building(models.Model):
   def create_elevators(self,building_id,number_of_elevators):
     '''
     Function to automatically create elevators inside an Bilding
-    Given the system id and number of elevators. This function is ran once
-    an elevator system is created
+    Given the Building id and number of elevators. This function is ran once
+    an elevator is created
     '''
 
     for i in range(number_of_elevators):

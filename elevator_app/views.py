@@ -7,9 +7,9 @@ from .models import Building,Elevator,ElevatorRequest
 from .serializer import *
 from .constants import RunningStatus
 
-class ElevatorSystemList(viewsets.ModelViewSet):
+class Building(viewsets.ModelViewSet):
   '''
-  Fetch all the listed elevator systems.
+  Fetch all the listed Building.
   '''
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -25,7 +25,7 @@ class ElevatorSystemList(viewsets.ModelViewSet):
         )
 
 
-class Elevator_(viewsets.ModelViewSet):
+class Elevator(viewsets.ModelViewSet):
   queryset = Elevator.objects.all()
   serializer_class = ElevatorSerializer
 
