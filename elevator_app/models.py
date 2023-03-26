@@ -1,15 +1,75 @@
 from django.db import models
 
-class Elevator(models.Model):
-    id = models.IntegerField(primary_key=True)
-    floor = models.IntegerField(default=0)
-    direction = models.CharField(max_length=10)
-    status = models.CharField(max_length=10)
-    is_working = models.BooleanField(default=True)
-    is_available = models.BooleanField(default=True)
+from django.db import models
+from enum import Enum
 
-class Request(models.Model):
-    elevator = models.ForeignKey(Elevator, on_delete=models.CASCADE)
-    floor = models.IntegerField()
-    direction = models.CharField(max_length=10)
-    timestamp = models.DateTimeField(auto_now_add=True)
+class RunningStatus(Enum):
+    '''
+    Choices for running status of the elevator system
+    '''
+    GOING_UP = 'going_up'
+    STANDING_STILL = 'standing_still'
+    GOING_DOWN = 'going_down'
+
+
+class Building(models.Model):
+  '''
+  Building Model. Equivalent to a building containing a number of elevators
+  Also contains the default ID parameter assigned by django as a primary key.
+  Used to make the project compatible with multiple elevator systems.
+  Minimum floor is assumed as 0 but dynamic minimum floor can be implemented easily.
+  '''
+  name = models.CharField(max_length=20)
+  max_floor = models.IntegerField()
+  number_of_elevators = models.PositiveSmallIntegerField()
+
+  def __str__(self) -> str:
+    return_str = str(self.name) + " Building No " + str(self.id)
+    return return_str
+  def create_elevators(self,building_id,number_of_elevators):
+    '''
+    Function to automatically create elevators inside an Bilding
+    Given the system id and number of elevators. This function is ran once
+    an elevator system is created
+    '''
+
+    for i in range(number_of_elevators):
+      elevator_object = Elevator.objects.create(
+        building_id=building_id,
+        number=i+1,
+      )
+
+      elevator_object.save()
+
+class Elevator(models.Model):
+  '''
+  Elevator object model. Represents a single elevator that can move up and down. It
+  is always a part of an entire elevator system. So elevator system is assigned as foreignkey.
+  
+  '''
+
+  building = models.ForeignKey(Building , on_delete=models.CASCADE)
+
+  number = models.IntegerField()
+  current_floor = models.PositiveSmallIntegerField(default=0)
+
+  is_operational = models.BooleanField(default=True)
+  is_door_open = models.BooleanField(default=True)
+  running_status = models.CharField(max_length=20, choices=[(status.value, status.name.title()) for status in RunningStatus], default=RunningStatus.STANDING_STILL.value)
+
+  def __str__(self) -> str:
+    return_str = "Elevator Number " + str(self.number)
+    return return_str
+
+
+
+class ElevatorRequest(models.Model):
+  '''
+  User request targeted to a specific elevator. This can be improved further using model managers 
+  to clean the invalid requests like request elevator in negative floor/greater than maximum floor
+  request an elevator that doesn't exist.
+  '''
+
+  source_floor = models.IntegerField()
+  destination_floor = models.IntegerField()
+  created_at = models.DateTimeField(auto_now_add=True)
