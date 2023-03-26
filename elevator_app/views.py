@@ -4,21 +4,22 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .elevator_logic import ElevatorController 
 from .models import Building,Elevator,ElevatorRequest
-from .serializer import BuildingSerializer,ElevatorSerializer,ElevatorRequestSerializer,ElevatorRequestSerializerAll
-
+from .serializer import *
+from .constants import RunningStatus
 
 class ElevatorSystemList(viewsets.ModelViewSet):
   '''
   Fetch all the listed elevator systems.
   '''
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.building = Building()
   queryset = Building.objects.all()
   serializer_class = BuildingSerializer
   
   def perform_create(self, serializer):
         serializer.save()
-
-        # Creating elevators needed for the system. For more details check create_elevators.py
-        Building().create_elevators(
+        self.building.create_elevators(
         number_of_elevators=serializer.data['number_of_elevators'],
         building_id=serializer.data['id']
         )
@@ -28,31 +29,26 @@ class Elevator_(viewsets.ModelViewSet):
   queryset = Elevator.objects.all()
   serializer_class = ElevatorSerializer
 
-from enum import Enum
-class RunningStatus(Enum):
-    '''
-    Choices for running status of the elevator system
-    '''
-    GOING_UP = 'going_up'
-    STANDING_STILL = 'standing_still'
-    GOING_DOWN = 'going_down'
-
-
 elevators = {}
 
 
 class ElevatorRequestView(APIView):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def post(self, request):
-        building_id = int(request.data.get('building_id'))
-        destination_floor = int(request.data.get('destination_floor'))
-        source_floor = int(request.data.get('source_floor'))
+      serializer = ElevatorRequestSerializer(data=request.data)
+      if serializer.is_valid():
+        building_id = serializer.validated_data['building_id']
+        destination_floor = serializer.validated_data['destination_floor']
+        source_floor = serializer.validated_data['source_floor']
         try:
           building_obj = Building.objects.get(id=building_id)
         except Building.DoesNotExist:
-          return Response("Given Elevator not found....")
+          return Response("Building not found", status=404)
         if destination_floor > building_obj.max_floor:
-          return Response("destination_floor should be less then max_floor",status=400)
+          return Response("Destination floor should be less than max floor", status=400)
         
         elevator_obj = Elevator.objects.filter(building_id=building_id,running_status = RunningStatus.STANDING_STILL.value)
         if not elevator_obj:
@@ -68,6 +64,8 @@ class ElevatorRequestView(APIView):
           elevator.add_request(request)
           if not elevator.is_alive():
             elevator.start()
+            return Response("Request sent successfully", status=200)
         else:
-           return Response("no elivator found")    
-        return Response("done")
+           return Response("No elevator found", status=400)
+      else:
+        return Response(serializer.errors, status=400)

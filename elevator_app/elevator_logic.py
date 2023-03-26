@@ -1,18 +1,9 @@
 import time
 import threading
-from .models import ElevatorRequest,Elevator
+from .models import Elevator
 import time
 from queue import Queue
-from enum import Enum
-from django.db import models
-class RunningStatus(Enum):
-    '''
-    Choices for running status of the elevator system
-    '''
-    GOING_UP = 'going_up'
-    STANDING_STILL = 'standing_still'
-    GOING_DOWN = 'going_down'
-
+from .constants import RunningStatus
 
 class ElevatorController(threading.Thread):
     '''
@@ -43,8 +34,6 @@ class ElevatorController(threading.Thread):
             # Check if there are any pending requests in the queue
             if not self.queue.empty():
                 request = self.queue.get()
-                print("1-----",request.source_floor)
-                print("2-----",self.current_floor)
                 if request.source_floor == self.current_floor:
                   pass
                 elif request.source_floor > self.current_floor:
