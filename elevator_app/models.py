@@ -21,6 +21,7 @@ class Building(models.Model):
   '''
   name = models.CharField(max_length=20)
   max_floor = models.IntegerField()
+  min_floor = models.IntegerField(default=0)
   number_of_elevators = models.PositiveSmallIntegerField()
 
   def __str__(self) -> str:

@@ -1,6 +1,6 @@
 import time
 import threading
-from .models import ElevatorRequest
+from .models import ElevatorRequest,Elevator
 import time
 from queue import Queue
 from enum import Enum
@@ -14,7 +14,7 @@ class RunningStatus(Enum):
     GOING_DOWN = 'going_down'
 
 
-class Elev(threading.Thread):
+class ElevatorController(threading.Thread):
     '''
     Elevator thread class. Each elevator is represented as a separate thread
     '''
@@ -42,16 +42,18 @@ class Elev(threading.Thread):
         while self.is_running:
             # Check if there are any pending requests in the queue
             if not self.queue.empty():
-                # Get the next request from the queue
-                # validate(request.source_floor,request.destination_floor)
                 request = self.queue.get()
-                # Set the elevator's running status to going up or going down depending on the direction of the request
+                print("1-----",request.source_floor)
+                print("2-----",self.current_floor)
                 if request.source_floor == self.current_floor:
                   pass
                 elif request.source_floor > self.current_floor:
                     self.running_status = RunningStatus.GOING_UP.value
                 else:
                     self.running_status = RunningStatus.GOING_DOWN.value
+                elevator = Elevator.objects.get(id = self.elevator_id)
+                elevator.running_status = self.running_status
+                elevator.save()
                 # Move the elevator to the requested floor
                 while self.current_floor != request.source_floor:
                     time.sleep(2)  # wait for 2 seconds to move to next floor
@@ -61,7 +63,7 @@ class Elev(threading.Thread):
                 print("door open")
                 self.is_door_open = True
                 # Wait for some time to simulate the elevator doors being open
-                time.sleep(1)
+                time.sleep(2)
                 # Close the elevator doors
                 self.is_door_open = False
                 print("door close")
@@ -71,8 +73,11 @@ class Elev(threading.Thread):
                 else:
                     self.running_status = RunningStatus.GOING_DOWN.value
                 
+                elevator = Elevator.objects.get(id = self.elevator_id)
+                elevator.running_status = self.running_status
+                elevator.save()
                 while self.current_floor != request.destination_floor:
-                    time.sleep(1)  # wait for 2 seconds to move to next floor
+                    time.sleep(2)  # taking time for 2 seconds to move to next floor
                     self.current_floor += 1 if self.running_status == RunningStatus.GOING_UP.value else -1
                     print(f"Elevator {self.elevator_id} is at floor {self.current_floor} and destination {request.destination_floor} .")
                 # Open the elevator doors
@@ -88,7 +93,12 @@ class Elev(threading.Thread):
             else:
                 # If there are no pending requests, set the elevator's running status to standing still
                 self.running_status = RunningStatus.STANDING_STILL.value
-                time.sleep(0)  # wait for 1 second before checking the queue again
+                elevator = Elevator.objects.get(id = self.elevator_id)
+                elevator.running_status = RunningStatus.STANDING_STILL.value
+                elevator.is_door_open = False
+                elevator.current_floor = self.current_floor
+                elevator.save()
+                time.sleep(2)  # wait for 1 second before checking the queue again
 
     def add_request(self, request):
         '''
