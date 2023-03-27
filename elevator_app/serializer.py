@@ -53,4 +53,6 @@ class ElevatorRequestSerializerAll(serializers.ModelSerializer):
 class ElevatorRequestSerializer(serializers.Serializer):
     building_id = serializers.CharField(max_length = 20,required = True)
     destination_floor = serializers.IntegerField(required = True)
-    source_floor = serializers.IntegerField(required = True)
+
+class ElevatorStatusSerializer(serializers.Serializer):
+    elevator_id = serializers.CharField(max_length = 20,required = True)

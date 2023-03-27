@@ -137,8 +137,6 @@ class RedisUtils:
         if res:
             d = {}
             for k, v in res.items():
-                k = k.decode("utf-8")
-                v = v.decode('utf-8')
                 d[k] = v
             res = d
         return res

@@ -4,7 +4,7 @@ from .models import Elevator
 import time
 from queue import Queue
 from .constants import RunningStatus
-
+from .redis_utils import RedisUtils
 class ElevatorController(threading.Thread):
     '''
     Elevator thread class. Each elevator is represented as a separate thread
@@ -21,9 +21,21 @@ class ElevatorController(threading.Thread):
         self.building_id = building_id
         self.queue = Queue()
         self.is_running = False
+        self.is_door_open  = False
+        self.redis_utils=RedisUtils()
 
+    def update_running_staus(self,elevator_status,):
+            elevator_status["running_status"] = self.running_status
+            self.redis_utils.add_to_hash_map_set(self.elevator_id, elevator_status)
 
-    # def validate()
+    def update_door(self,elevator_status,):
+            elevator_status["is_door_open"] = int(self.is_door_open)
+            self.redis_utils.add_to_hash_map_set(self.elevator_id, elevator_status)
+
+    def update_current_floor(self,elevator_status,):
+            elevator_status["current_floor"] = self.current_floor
+            self.redis_utils.add_to_hash_map_set(self.elevator_id, elevator_status)
+    
     def run(self):
         '''
         Run function for the Elevator thread. This function keeps the elevator moving between floors
@@ -34,34 +46,23 @@ class ElevatorController(threading.Thread):
             # Check if there are any pending requests in the queue
             if not self.queue.empty():
                 request = self.queue.get()
-                if request.source_floor == self.current_floor:
-                  pass
-                elif request.source_floor > self.current_floor:
-                    self.running_status = RunningStatus.GOING_UP.value
-                else:
-                    self.running_status = RunningStatus.GOING_DOWN.value
-                elevator = Elevator.objects.get(id = self.elevator_id)
-                elevator.running_status = self.running_status
-                elevator.save()
-                # Move the elevator to the requested floor
-                while self.current_floor != request.source_floor:
-                    time.sleep(2)  # wait for 2 seconds to move to next floor
-                    self.current_floor += 1 if self.running_status == RunningStatus.GOING_UP.value else -1
-                    print(f"Elevator {self.elevator_id} is at floor {self.current_floor}. and source {request.source_floor}")
-                # Open the elevator doors
-                print("door open")
-                self.is_door_open = True
-                # Wait for some time to simulate the elevator doors being open
-                time.sleep(2)
-                # Close the elevator doors
-                self.is_door_open = False
-                print("door close")
-                # Move the elevator to the destination floor
                 if request.destination_floor > self.current_floor:
                     self.running_status = RunningStatus.GOING_UP.value
                 else:
                     self.running_status = RunningStatus.GOING_DOWN.value
                 
+                elevator_status = {
+                    "current_floor": self.current_floor,
+                    "is_door_open": int(self.is_door_open),
+                    "running_status": self.running_status
+                }
+                # Save the current status of the elevator in Redis
+                self.redis_utils.add_to_hash_map_set(self.elevator_id, elevator_status)
+                
+                elevator = Elevator.objects.get(id = self.elevator_id)
+                elevator.running_status = self.running_status
+                elevator.save()
+                self.update_running_staus(elevator_status)
                 elevator = Elevator.objects.get(id = self.elevator_id)
                 elevator.running_status = self.running_status
                 elevator.save()
@@ -69,13 +70,19 @@ class ElevatorController(threading.Thread):
                     time.sleep(2)  # taking time for 2 seconds to move to next floor
                     self.current_floor += 1 if self.running_status == RunningStatus.GOING_UP.value else -1
                     print(f"Elevator {self.elevator_id} is at floor {self.current_floor} and destination {request.destination_floor} .")
+                    self.update_current_floor(elevator_status)
+
+                self.running_status = RunningStatus.STANDING_STILL.value
+                self.update_running_staus(elevator_status)
                 # Open the elevator doors
                 print("door open")
                 self.is_door_open = True
+                self.update_door(elevator_status)
                 # Wait for some time to simulate the elevator doors being open
                 time.sleep(2)
                 # Close the elevator doors
                 self.is_door_open = False
+                self.update_door(elevator_status)
                 print("door close")
                 # Mark the request as completed in the database
                 request.delete()
