@@ -5,9 +5,10 @@ from rest_framework import status
 from .elevator_logic import ElevatorController 
 from .models import Building,Elevator,ElevatorRequest
 from .serializer import *
+from .redis_utils import RedisUtils
 from .constants import RunningStatus
 
-class Building(viewsets.ModelViewSet):
+class BuildingView(viewsets.ModelViewSet):
   '''
   Fetch all the listed Building.
   '''
@@ -25,7 +26,7 @@ class Building(viewsets.ModelViewSet):
         )
 
 
-class Elevator(viewsets.ModelViewSet):
+class ElevatorView(viewsets.ModelViewSet):
   queryset = Elevator.objects.all()
   serializer_class = ElevatorSerializer
 
@@ -42,7 +43,6 @@ class ElevatorRequestView(APIView):
       if serializer.is_valid():
         building_id = serializer.validated_data['building_id']
         destination_floor = serializer.validated_data['destination_floor']
-        source_floor = serializer.validated_data['source_floor']
         try:
           building_obj = Building.objects.get(id=building_id)
         except Building.DoesNotExist:
@@ -59,13 +59,61 @@ class ElevatorRequestView(APIView):
           if elevator_obj.id not in elevators:
             elevators[elevator_obj.id] = ElevatorController(elevator_id=elevator_obj.id, initial_floor=elevator_obj.current_floor, building_id=building_id)
           elevator = elevators[elevator_obj.id]
-          request = ElevatorRequest(source_floor=source_floor, destination_floor=destination_floor)
+          request = ElevatorRequest(destination_floor=destination_floor)
           request.save()
           elevator.add_request(request)
           if not elevator.is_alive():
             elevator.start()
-            return Response("Request sent successfully", status=200)
+          return Response("Request sent successfully", status=200)
         else:
            return Response("No elevator found", status=400)
+      else:
+        return Response(serializer.errors, status=400)
+
+class ElevatorStatus(APIView):
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.redis_utils=RedisUtils()
+
+  def post(self,request):
+      serializer = ElevatorStatusSerializer(data=request.data)
+      if serializer.is_valid():
+        elevator_id = serializer.validated_data['elevator_id']
+        try:
+          elevator_obj = Elevator.objects.get(id=elevator_id)
+        except Elevator.DoesNotExist:
+          return Response("Elevator not found", status=404)
+        
+        # Retrieve the elevator status from Redis cache
+        status = self.redis_utils.get_all_fields_value_from_map(elevator_id)
+        if not status:
+          # If the status doesn't exist in cache, retrieve it from the database
+          current_floor = elevator_obj.current_floor
+          is_door_open = elevator_obj.is_door_open
+          running_status = elevator_obj.running_status
+          elevator_status = {
+                    "current_floor": current_floor,
+                    "is_door_open": int(is_door_open),
+                    "running_status": running_status
+                }
+          # Save the status in Redis cache for future requests
+          self.redis_utils.add_to_hash_map_set(str(elevator_id), elevator_status)
+          
+        else:
+          current_floor = status['current_floor']
+          is_door_open = status['is_door_open']
+          running_status = status['running_status']
+        message = "data fectch successfully"
+        data = {
+           "current_floor" : current_floor,
+           "is_door_open" : is_door_open,
+           "running_status" : running_status,
+        }
+        result={
+                'data':data,
+                "message":message
+            }
+        return Response(result,status=200)
       else:
         return Response(serializer.errors, status=400)
