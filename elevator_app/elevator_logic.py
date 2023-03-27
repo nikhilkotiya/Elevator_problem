@@ -103,6 +103,7 @@ class ElevatorController(threading.Thread):
                 self.update_door(elevator_status)
                 print("door close")
                 elevator.current_floor = self.current_floor
+                elevator.running_status = self.running_status
                 elevator.is_busy = False
                 elevator.save()
                 # Mark the request as completed in the database

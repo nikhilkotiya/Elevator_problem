@@ -52,9 +52,6 @@ class Elevator(models.Model):
     return_str = "Elevator Number " + str(self.number)
     return return_str
 
-#add Marks which elevator is available or busy.
-#add Can mark which elevator is operational and which is not.
-#The system has to assign the most optimal elevator to the user according to their request.
 class ElevatorRequest(models.Model):
   '''
   User request targeted to a specific elevator. This can be improved further using model managers 
