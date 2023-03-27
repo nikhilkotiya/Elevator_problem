@@ -43,9 +43,9 @@ class Elevator(models.Model):
 
   number = models.IntegerField()
   current_floor = models.PositiveSmallIntegerField(default=0)
-
+  is_busy = models.BooleanField(default=False)
   is_operational = models.BooleanField(default=True)
-  is_door_open = models.BooleanField(default=True)
+  is_door_open = models.BooleanField(default=False)
   running_status = models.CharField(max_length=20, choices=[(status.value, status.name.title()) for status in RunningStatus], default=RunningStatus.STANDING_STILL.value)
 
   def __str__(self) -> str:
@@ -61,6 +61,5 @@ class ElevatorRequest(models.Model):
   to clean the invalid requests like request elevator in negative floor/greater than maximum floor
   request an elevator that doesn't exist.
   '''
-
   destination_floor = models.IntegerField()
   created_at = models.DateTimeField(auto_now_add=True)

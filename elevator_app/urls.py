@@ -32,6 +32,7 @@ urlpatterns=[
     path('buildings/<int:pk>/', building_detail, name='building-detail'),
     path('elevator/', Elevator_list, name='elevator-list'),
     path('elevator/<int:pk>/', Elevator_detail, name='elevator-detail'),
-    path('request_of_elivator/',ElevatorRequestView.as_view()),
+    path('request_outside_elivator/',ElevatorOutsideRequestView.as_view()),
+    path('request_inside_elivator/',ElevatorInsideRequestView.as_view()),
     path('ElevatorStaus',ElevatorStatus.as_view())
 ]
