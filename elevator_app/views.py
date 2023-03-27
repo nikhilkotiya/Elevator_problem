@@ -7,16 +7,17 @@ from .models import Building, Elevator, ElevatorRequest
 from .serializer import *
 from .redis_utils import RedisUtils
 from .constants import RunningStatus
-
+elevators = {}
 
 class BuildingView(viewsets.ModelViewSet):
     '''
-    Fetch all the listed Building.
+    Crud for Building
     '''
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.building = Building()
+    
     queryset = Building.objects.all()
     serializer_class = BuildingSerializer
 
@@ -29,12 +30,11 @@ class BuildingView(viewsets.ModelViewSet):
 
 
 class ElevatorView(viewsets.ModelViewSet):
+    '''
+    Crud for Elevator
+    '''
     queryset = Elevator.objects.all()
     serializer_class = ElevatorSerializer
-
-
-elevators = {}
-
 
 class ElevatorOutsideRequestView(APIView):
 
@@ -42,6 +42,9 @@ class ElevatorOutsideRequestView(APIView):
         super().__init__(*args, **kwargs)
 
     def post(self, request):
+        '''
+        function used when the user request for the Elevator from outside 
+        '''
         serializer = ElevatorRequestOutsideSerializer(data=request.data)
         if serializer.is_valid():
             building_id = serializer.validated_data['building_id']
@@ -52,14 +55,14 @@ class ElevatorOutsideRequestView(APIView):
             except Building.DoesNotExist:
                 return Response("Building not found", status=status.HTTP_404_NOT_FOUND)
 
-            if destination_floor > building_obj.max_floor:
+            if destination_floor > building_obj.max_floor: # check for maximum floor reached by the elevator
                 return Response("Destination floor should be less than max floor", status=status.HTTP_400_BAD_REQUEST)
 
-            if destination_floor < building_obj.min_floor:
+            if destination_floor < building_obj.min_floor: # check for minimum floor reached by the elevator
                 return Response("Destination floor should be less than min floor", status=status.HTTP_400_BAD_REQUEST)
 
             elevator_obj = Elevator.objects.filter(
-                building_id=building_id, running_status=RunningStatus.STANDING_STILL.value).first()
+                building_id=building_id, running_status=RunningStatus.STANDING_STILL.value).first()# get which Elevator is free if found any then we will assign that elevator
             if not elevator_obj:
                 elevator_obj = Elevator.objects.filter(
                     building_id=building_id).first()
@@ -75,7 +78,7 @@ class ElevatorOutsideRequestView(APIView):
                 request.save()
                 elevator.add_request(request)
 
-                if not elevator.is_alive():
+                if not elevator.is_alive():# run the thread for ElevatorController if not running
                     elevator.start()
 
                 return Response("Request sent successfully", status=status.HTTP_200_OK)
@@ -91,6 +94,9 @@ class ElevatorInsideRequestView(APIView):
         super().__init__(*args, **kwargs)
 
     def post(self, request):
+        '''
+        function used when the user request for the Elevator to reach on the destination from inside the Elevator 
+        '''
         serializer = ElevatorRequestSerializer(data=request.data)
         if serializer.is_valid():
             building_id = serializer.validated_data['building_id']
@@ -105,6 +111,7 @@ class ElevatorInsideRequestView(APIView):
 
             elevator_obj = Elevator.objects.get(id=elevator_id)
             if elevator_obj:
+                # calling the ElevatorController
                 if elevator_obj.id not in elevators:
                     elevators[elevator_obj.id] = ElevatorController(
                         elevator_id=elevator_obj.id, initial_floor=elevator_obj.current_floor, building_id=building_id, min=building_obj.min_floor, max=building_obj.max_floor)
@@ -112,11 +119,14 @@ class ElevatorInsideRequestView(APIView):
                 request = ElevatorRequest(destination_floor=destination_floor)
                 request.save()
                 elevator.add_request(request)
-                if not elevator.is_alive():
+                
+                if not elevator.is_alive():# run the thread for ElevatorController if not running
                     elevator.start()
                 return Response("Request sent successfully", status=200)
+            
             else:
                 return Response("No elevator found", status=400)
+        
         else:
             return Response(serializer.errors, status=400)
 

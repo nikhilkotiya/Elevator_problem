@@ -1,6 +1,4 @@
-from django.contrib import admin
-from django.urls import path,include
-
+from  django.urls import path
 from .views import *
 from rest_framework import routers
 router = routers.DefaultRouter()
@@ -27,12 +25,12 @@ Elevator_detail = ElevatorView.as_view({
     'delete': 'destroy'
 })
 
-urlpatterns=[
+urlpatterns = [
     path('buildings/', building_list, name='building-list'),
     path('buildings/<int:pk>/', building_detail, name='building-detail'),
     path('elevator/', Elevator_list, name='elevator-list'),
     path('elevator/<int:pk>/', Elevator_detail, name='elevator-detail'),
-    path('request_outside_elivator/',ElevatorOutsideRequestView.as_view()),
-    path('request_inside_elivator/',ElevatorInsideRequestView.as_view()),
-    path('ElevatorStaus',ElevatorStatus.as_view())
+    path('request_outside_elivator/', ElevatorOutsideRequestView.as_view()),
+    path('request_inside_elivator/', ElevatorInsideRequestView.as_view()),
+    path('elevator_status/', ElevatorStatus.as_view())
 ]
