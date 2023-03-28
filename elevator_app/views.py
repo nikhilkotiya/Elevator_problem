@@ -109,8 +109,11 @@ class ElevatorInsideRequestView(APIView):
                 building_obj = Building.objects.get(id=building_id)
             except Building.DoesNotExist:
                 return Response("Building not found", status=404)
-            if destination_floor > building_obj.max_floor:
-                return Response("Destination floor should be less than max floor", status=400)
+            if destination_floor > building_obj.max_floor: # check for maximum floor reached by the elevator
+                return Response("Destination floor should be less than max floor", status=status.HTTP_400_BAD_REQUEST)
+
+            if destination_floor < building_obj.min_floor: # check for minimum floor reached by the elevator
+                return Response("Destination floor should be less than min floor", status=status.HTTP_400_BAD_REQUEST)
             try:
                 elevator_obj = Elevator.objects.get(id=elevator_id)
             except Elevator.DoesNotExist:
