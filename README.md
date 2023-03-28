@@ -2,30 +2,36 @@ The elevator system is built completely from the user perspective. There are ele
 
 Installation :
 Make a python virtual enviornment in your preferred Linux/WSL2...any system
+
 Recommended python version -----> 3.11.1 (The LATEST STABLE RELEASE)
 
 Clone the repo and navigate to the directory where the manage.py file is located
-git clone https://github.com/nikhilkotiya/Elevator_problem.git
-
+git clone 
+```
+https://github.com/nikhilkotiya/Elevator_problem.git
+```
+After clonening
+```
 cd elevator
-
-Please read the special note point number 2 below, and go through the entire notes once.
+```
 
 Install the requirements
-
+```
 pip install -r requirements.txt
-
+```
 
 Run the development server
-
+```
 python manage.py runserver
+```
 
+* Make sure your redis is running
 
-Make sure your redis is running
+* The elevator is running in a different threads.
 
+* sqlite3 DB is used
 
-The elevator is running in a different threads.
-
-sqlite3 DB is used
-
-Please check the models representation and API endpoints at DOCS.md
+Please check the models representation and API endpoints at DOCS.md. i remomment use the swagger docs
+```
+http://127.0.0.1:8000/api/schema/docs#/request_inside_elivator
+```
