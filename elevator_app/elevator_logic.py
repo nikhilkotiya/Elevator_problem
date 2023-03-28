@@ -26,7 +26,7 @@ class ElevatorController(threading.Thread):
         self.is_door_open = False
         self.min = min
         self.redis_utils = RedisUtils()
-        self.arr = [0] * (max-min)
+        self.arr = [0] * (max-min+1)
 
     def update_running_staus(self, elevator_status,):
         elevator_status["running_status"] = self.running_status

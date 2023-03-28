@@ -1,0 +1,689 @@
+openapi: 3.0.3
+info:
+  title: ELEVATOR SYSTEM
+  version: 0.0.0
+paths:
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /buildings/:
+    get:
+      operationId: buildings_list
+      description: Crud for Building
+      tags:
+      - buildings
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Building'
+          description: ''
+    post:
+      operationId: buildings_create
+      description: Crud for Building
+      tags:
+      - buildings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Building'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Building'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Building'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Building'
+          description: ''
+  /buildings/{id}/:
+    get:
+      operationId: buildings_retrieve
+      description: Crud for Building
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - buildings
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Building'
+          description: ''
+    put:
+      operationId: buildings_update
+      description: Crud for Building
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - buildings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Building'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Building'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Building'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Building'
+          description: ''
+    patch:
+      operationId: buildings_partial_update
+      description: Crud for Building
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - buildings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBuilding'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBuilding'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBuilding'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Building'
+          description: ''
+    delete:
+      operationId: buildings_destroy
+      description: Crud for Building
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - buildings
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /elevator/:
+    get:
+      operationId: elevator_list
+      description: Crud for Elevator
+      tags:
+      - elevator
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Elevator'
+          description: ''
+    post:
+      operationId: elevator_create
+      description: Crud for Elevator
+      tags:
+      - elevator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Elevator'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Elevator'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Elevator'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Elevator'
+          description: ''
+  /elevator/{id}/:
+    get:
+      operationId: elevator_retrieve
+      description: Crud for Elevator
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - elevator
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Elevator'
+          description: ''
+    put:
+      operationId: elevator_update
+      description: Crud for Elevator
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - elevator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Elevator'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Elevator'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Elevator'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Elevator'
+          description: ''
+    patch:
+      operationId: elevator_partial_update
+      description: Crud for Elevator
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - elevator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedElevator'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedElevator'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedElevator'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Elevator'
+          description: ''
+    delete:
+      operationId: elevator_destroy
+      description: Crud for Elevator
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - elevator
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /elevator_status/:
+    post:
+      operationId: elevator_status_create
+      tags:
+      - elevator_status
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElevatorStatus'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ElevatorStatus'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ElevatorStatus'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElevatorStatus'
+          description: ''
+  /request_inside_elivator/:
+    post:
+      operationId: request_inside_elivator_create
+      description: function used when the user request for the Elevator to reach on
+        the destination from inside the Elevator
+      tags:
+      - request_inside_elivator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElevatorRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ElevatorRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ElevatorRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElevatorRequest'
+          description: ''
+  /request_outside_elivator/:
+    post:
+      operationId: request_outside_elivator_create
+      description: function used when the user request for the Elevator from outside
+      tags:
+      - request_outside_elivator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElevatorRequestOutside'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ElevatorRequestOutside'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ElevatorRequestOutside'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElevatorRequestOutside'
+          description: ''
+components:
+  schemas:
+    Building:
+      type: object
+      description: Model serializer for model Building
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 20
+        max_floor:
+          type: integer
+        min_floor:
+          type: integer
+        number_of_elevators:
+          type: integer
+      required:
+      - id
+      - max_floor
+      - name
+      - number_of_elevators
+    Elevator:
+      type: object
+      description: Model serializer for model Elevator
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        number:
+          type: integer
+        current_floor:
+          type: integer
+        is_busy:
+          type: boolean
+        is_operational:
+          type: boolean
+        is_door_open:
+          type: boolean
+        running_status:
+          $ref: '#/components/schemas/RunningStatusEnum'
+        building:
+          type: integer
+      required:
+      - building
+      - id
+      - number
+    ElevatorRequest:
+      type: object
+      description: |-
+        serializer for people inside Elevator, used for
+        validate the request
+      properties:
+        elevator_id:
+          type: integer
+        building_id:
+          type: integer
+        destination_floor:
+          type: integer
+      required:
+      - building_id
+      - destination_floor
+      - elevator_id
+    ElevatorRequestOutside:
+      type: object
+      description: |-
+        serializer for people outside Elevator, used for
+        validate the request
+      properties:
+        building_id:
+          type: integer
+        destination_floor:
+          type: integer
+      required:
+      - building_id
+      - destination_floor
+    ElevatorStatus:
+      type: object
+      description: |-
+        serializer for Status of Elevator, used for
+        validate the request
+      properties:
+        elevator_id:
+          type: integer
+      required:
+      - elevator_id
+    PatchedBuilding:
+      type: object
+      description: Model serializer for model Building
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 20
+        max_floor:
+          type: integer
+        min_floor:
+          type: integer
+        number_of_elevators:
+          type: integer
+    PatchedElevator:
+      type: object
+      description: Model serializer for model Elevator
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        number:
+          type: integer
+        current_floor:
+          type: integer
+        is_busy:
+          type: boolean
+        is_operational:
+          type: boolean
+        is_door_open:
+          type: boolean
+        running_status:
+          $ref: '#/components/schemas/RunningStatusEnum'
+        building:
+          type: integer
+    RunningStatusEnum:
+      enum:
+      - going_up
+      - standing_still
+      - going_down
+      - not_working
+      type: string
+      description: |-
+        * `going_up` - Going_Up
+        * `standing_still` - Standing_Still
+        * `going_down` - Going_Down
+        * `not_working` - Not_Working
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

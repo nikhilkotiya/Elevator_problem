@@ -50,7 +50,7 @@ class ElevatorRequestSerializer(serializers.Serializer):
     validate the request 
     '''
     elevator_id = serializers.IntegerField(required=True)
-    building_id = serializers.CharField(max_length=20, required=True)
+    building_id = serializers.IntegerField(required=True)
     destination_floor = serializers.IntegerField(required=True)
 
 
@@ -59,7 +59,7 @@ class ElevatorRequestOutsideSerializer(serializers.Serializer):
     serializer for people outside Elevator, used for 
     validate the request 
     '''
-    building_id = serializers.CharField(max_length=20, required=True)
+    building_id = serializers.IntegerField(required=True)
     destination_floor = serializers.IntegerField(required=True)
 
 
@@ -68,4 +68,4 @@ class ElevatorStatusSerializer(serializers.Serializer):
     serializer for Status of Elevator, used for 
     validate the request 
     '''
-    elevator_id = serializers.CharField(max_length=20, required=True)
+    elevator_id = serializers.IntegerField(required=True)

@@ -38,6 +38,8 @@ class ElevatorView(viewsets.ModelViewSet):
 
 class ElevatorOutsideRequestView(APIView):
 
+    serializer_class = ElevatorRequestOutsideSerializer
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -90,6 +92,7 @@ class ElevatorOutsideRequestView(APIView):
 
 class ElevatorInsideRequestView(APIView):
 
+    serializer_class = ElevatorRequestSerializer
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -108,8 +111,10 @@ class ElevatorInsideRequestView(APIView):
                 return Response("Building not found", status=404)
             if destination_floor > building_obj.max_floor:
                 return Response("Destination floor should be less than max floor", status=400)
-
-            elevator_obj = Elevator.objects.get(id=elevator_id)
+            try:
+                elevator_obj = Elevator.objects.get(id=elevator_id)
+            except Elevator.DoesNotExist:
+                return Response("Elevator not found", status=404)
             if elevator_obj:
                 # calling the ElevatorController
                 if elevator_obj.id not in elevators:
@@ -132,6 +137,8 @@ class ElevatorInsideRequestView(APIView):
 
 
 class ElevatorStatus(APIView):
+
+    serializer_class = ElevatorStatusSerializer
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -156,6 +163,7 @@ class ElevatorStatus(APIView):
                 is_door_open = elevator_obj.is_door_open
                 running_status = elevator_obj.running_status
                 is_busy = elevator_obj.is_busy
+                print("is_busy",is_busy)
                 elevator_status = {
                     "current_floor": current_floor,
                     "is_door_open": int(is_door_open),
@@ -169,8 +177,8 @@ class ElevatorStatus(APIView):
                 current_floor = status['current_floor']
                 is_door_open = status['is_door_open']
                 running_status = status['running_status']
-                if running_status == RunningStatus.STANDING_STILL.value:
-                    is_busy = False
+                if running_status == RunningStatus.GOING_DOWN.value or running_status == RunningStatus.GOING_UP.value: 
+                    is_busy = True # this is just for the edge case of redis because we have not sotred print is_busy in redis, we have saved in db
             message = "data fectch successfully"
             data = {
                 "current_floor": current_floor,
@@ -185,3 +193,5 @@ class ElevatorStatus(APIView):
             return Response(result, status=200)
         else:
             return Response(serializer.errors, status=400)
+
+
