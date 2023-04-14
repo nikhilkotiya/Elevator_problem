@@ -6,7 +6,8 @@ steps:
     args:
       - "-c"
       - |
-        deploy.yml
+        chmod +x deploy.yml
+        ./deploy.yml
 
   # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   #   entrypoint: 'bash'
