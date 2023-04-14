@@ -1,6 +1,6 @@
-name: Deploy to Google Cloud
+name : Deploy to Google Cloud
 
-on:
+on :
   push:
     branches:
       - master
@@ -18,12 +18,12 @@ jobs:
       - name: SSH into Google Cloud instance
         uses: appleboy/ssh-action@master
         with:
-          host: your-instance-ip
+          host: 34.29.206.8
           username: nikhilkotiya8
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/chooserightai/your_project_directory &&
-            git pull &&
+            cd /home/chooserightai/Elea &&
+            git pull origin master &&
             source /home/chooserightai/venv/bin/activate &&
             pip install -r requirements.txt &&
             python manage.py migrate &&
