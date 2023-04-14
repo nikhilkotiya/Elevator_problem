@@ -4,11 +4,11 @@ steps:
   - name: "gcr.io/cloud-builders/python"
     entrypoint: pip
     args: ["install", "-r", "app/requirements.txt"]
-  - name: "gcr.io/cloud-builders/python"
-    entrypoint: python
-    args:
-      - "app/manage.py"
-      - "migrate"
+  # - name: "gcr.io/cloud-builders/python"
+  #   entrypoint: python
+  #   args:
+  #     - "app/manage.py"
+  #     - "migrate"
   - name: "gcr.io/cloud-builders/bash"
     entrypoint: bash
     args:
