@@ -1,6 +1,6 @@
 steps:
   - name: "git"
-    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "."]
+    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "master"]
   - name: "ubuntu"
     entrypoint: bash
     args:
