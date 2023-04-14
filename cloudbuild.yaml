@@ -14,5 +14,5 @@ steps:
     args:
       - "-c"
       - |
-        sudo systemctl restart nginx
-        sudo systemctl restart gunicorn
+        systemctl restart nginx
+        systemctl restart gunicorn
