@@ -1,22 +1,18 @@
 steps:
-  # Pull the latest code from Github
-  - name: 'gcr.io/cloud-builders/git'
-    args: ['clone', 'https://github.com/nikhilkotiya/Elevator_problem.git', '.']
-  - name: 'gcr.io/cloud-builders/git'
-    args: ['checkout', 'master']
-  - name: 'gcr.io/cloud-builders/git'
-    args: ['pull']
-
-  # Install dependencies
-  - name: 'gcr.io/cloud-builders/python'
-    args: ['-m', 'pip', 'install', '-r', 'requirements.txt']
-
-  # Run migrations
-  - name: 'gcr.io/cloud-builders/python'
-    args: ['manage.py', 'migrate']
-
-  # Restart nginx and gunicorn
-  - name: 'gcr.io/cloud-builders/systemctl'
-    args: ['restart', 'gunicorn']
-  - name: 'gcr.io/cloud-builders/systemctl'
-    args: ['restart', 'nginx']
+  - name: "gcr.io/cloud-builders/git"
+    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "app"]
+  - name: "gcr.io/cloud-builders/python"
+    entrypoint: pip
+    args: ["install", "-r", "app/requirements.txt"]
+  - name: "gcr.io/cloud-builders/python"
+    entrypoint: python
+    args:
+      - "app/manage.py"
+      - "migrate"
+  - name: "gcr.io/cloud-builders/bash"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        sudo systemctl restart nginx
+        sudo systemctl restart gunicorn
