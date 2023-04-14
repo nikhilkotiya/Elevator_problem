@@ -1,6 +1,6 @@
 steps:
   - name: "git"
-    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "app"]
+    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "."]
   - name: python  
     entrypoint: python
     args: ["-m", "pip", "install", "--upgrade", "pip"]  
