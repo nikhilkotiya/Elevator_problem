@@ -1,5 +1,5 @@
 steps:
-  - name: "git"
+  - name: "gcr.io/cloud-builders/git"
     args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "master"]
   - name: "ubuntu"
     entrypoint: bash
