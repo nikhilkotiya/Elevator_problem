@@ -1,6 +1,6 @@
 steps:
   - name: "gcr.io/cloud-builders/git"
-    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "."]
+    args: ["pull", "https://github.com/nikhilkotiya/Elevator_problem.git"]
   - name: "python"
     entrypoint: python
     args: ["-m", "venv", "venv"]
