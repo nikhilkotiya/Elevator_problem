@@ -1,9 +1,9 @@
 steps:
   - name: "gcr.io/cloud-builders/git"
     args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "app"]
-  - name: "gcr.io/cloud-builders/python"
-    entrypoint: pip
-    args: ["install", "-r", "app/requirements.txt"]
+  - name: python  
+    entrypoint: python
+    args: ["-m", "pip", "install", "--upgrade", "pip"]  
   # - name: "gcr.io/cloud-builders/python"
   #   entrypoint: python
   #   args:
