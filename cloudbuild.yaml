@@ -7,6 +7,6 @@ steps:
   - name: "python"
     entrypoint: bash
     args: ["-c", "source venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt"]
-  - name: "gcr.io/cloud-builders/bash"
+  - name: "bash"
     entrypoint: bash
     args: ["-c", "sudo systemctl restart nginx && sudo systemctl restart gunicorn"]
