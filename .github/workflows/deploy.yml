@@ -22,7 +22,7 @@ jobs:
           username: nikhilkotiya8
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/chooserightai/Elea &&
+            cd /home/chooserightai/Elevator_problem &&
             git pull origin master &&
             source /home/chooserightai/venv/bin/activate &&
             pip install -r requirements.txt &&
