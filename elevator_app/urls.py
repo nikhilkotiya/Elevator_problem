@@ -26,7 +26,7 @@ Elevator_detail = ElevatorView.as_view({
 })
 
 urlpatterns = [
-    path('buildings/', building_list, name='building-list'),
+    # path('buildings/', building_list, name='building-list'),
     path('buildings/<int:pk>/', building_detail, name='building-detail'),
     path('elevator/', Elevator_list, name='elevator-list'),
     path('elevator/<int:pk>/', Elevator_detail, name='elevator-detail'),

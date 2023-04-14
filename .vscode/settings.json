@@ -1,6 +1,5 @@
 {
     "yaml.schemas": {
-        "file:///c%3A/Users/gagan/.vscode/extensions/docsmsft.docs-yaml-1.0.0/dist/toc.schema.json": "/toc\\.yml/i",
         "https://json.schemastore.org/sourcehut-build-0.65.0.json": "file:///c%3A/Users/gagan/OneDrive/Desktop/elevator/elevator/.github/workflows/deploy.yml"
     }
 }
