@@ -9,12 +9,11 @@ steps:
   #   args:
   #     - "app/manage.py"
   #     - "migrate"
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'bash'
+  - name: "bash"
+    entrypoint: bash
     args:
-    - '-eEuo'
-    - 'pipefail'
-    - '-c'
-    - |-
-      systemctl restart gunicorn
-      systemctl restart nginx
+      - "-c"
+      - |
+        su -
+        systemctl restart nginx
+        systemctl restart gunicorn
