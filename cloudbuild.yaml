@@ -1,3 +1,18 @@
 steps:
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['apply', '-f', 'deploy.yaml']
+  - name: "ubuntu"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        chmod +x deploy.yaml
+        ./deploy.yaml
+
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   entrypoint: 'bash'
+  #   args:
+  #   - '-eEuo'
+  #   - 'pipefail'
+  #   - '-c'
+  #   - |-
+  #     systemctl restart gunicorn
+  #     systemctl restart nginx
