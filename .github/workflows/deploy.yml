@@ -1,14 +1,10 @@
 name : Deploy to Google Cloud
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
-  workflow_dispatch:
-  manual:
-    inputs:
-      confirm_deploy:
-        description: 'Are you sure you want to deploy?'
 
 jobs:
   deploy:
