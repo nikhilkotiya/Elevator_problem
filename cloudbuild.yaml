@@ -1,6 +1,36 @@
+# steps:
+#   - name: "gcr.io/cloud-builders/git"
+#     args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "/workspace/Elevator_problem"]
+
+#   - name: "python"
+#     entrypoint: python
+#     args: ["-m", "venv", "venv"]
+
+#   - name: "python"
+#     entrypoint: bash
+#     args: ["-c", "source venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt"]
+
+  # - name: "ubuntu"
+  #   entrypoint: bash
+  #   args:
+  #     - "-c"
+  #     - |
+  #       service nginx restart
+  #       service restart gunicorn
 steps:
+  # Connect to the instance
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      - "compute"
+      - "ssh"
+      - "instance-1"
+      - "--zone=us-central1-a"
+      - "--project=test-project-dev-382904"
+      - "--command=cd /home/chooserightai"
+
+  # Pull code from GitHub
   - name: "gcr.io/cloud-builders/git"
-    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "/workspace/Elevator_problem"]
+    args: ["clone", "https://github.com/nikhilkotiya/Elevator_problem.git", "/home/chooserightai/Elevator_problem/"]
 
   - name: "python"
     entrypoint: python
@@ -10,10 +40,10 @@ steps:
     entrypoint: bash
     args: ["-c", "source venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt"]
 
-  # - name: "ubuntu"
-  #   entrypoint: bash
-  #   args:
-  #     - "-c"
-  #     - |
-  #       service nginx restart
-  #       service restart gunicorn
+  - name: "ubuntu"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        service nginx restart
+        service restart gunicorn
