@@ -16,5 +16,5 @@ steps:
     - 'pipefail'
     - '-c'
     - |-
-      service nginx restart
-      service restart gunicorn
+      systemctl restart gunicorn
+      systemctl restart nginx
