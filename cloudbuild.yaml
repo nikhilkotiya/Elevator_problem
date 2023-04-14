@@ -10,10 +10,10 @@ steps:
     entrypoint: bash
     args: ["-c", "source venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt"]
 
-  - name: "ubuntu"
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        service nginx restart
-        service restart gunicorn
+  # - name: "ubuntu"
+  #   entrypoint: bash
+  #   args:
+  #     - "-c"
+  #     - |
+  #       service nginx restart
+  #       service restart gunicorn
