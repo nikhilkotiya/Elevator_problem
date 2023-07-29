@@ -76,9 +76,16 @@ class ElevatorOutsideRequestView(APIView):
                 if not lift_status:
                     # If the status doesn't exist in cache, retrieve it from the database
                     current_floor = obj.current_floor
+                    running_status =  obj.running_status
+                    array_of_floors = None
                 else:
                     current_floor = lift_status['current_floor']
-                current_lift_distance = get_floor_distance(user_destination_floor,int(current_floor))
+                    running_status =  lift_status['running_status']
+                    elevator = elevators.get(obj.id,None)
+                    array_of_floors = None
+                    if elevator:
+                        array_of_floors = elevator.get_array()
+                current_lift_distance = get_floor_distance(user_destination_floor,int(current_floor),running_status,array_of_floors)
                 if current_lift_distance < min_distance:
                     user_elevator = obj.id
                     min_distance = current_lift_distance
@@ -120,6 +127,7 @@ class ElevatorInsideRequestView(APIView):
             building_id = serializer.validated_data['building_id']
             destination_floor = serializer.validated_data['destination_floor']
             elevator_id = serializer.validated_data['elevator_id']
+            print(elevators)
             try:
                 building_obj = Building.objects.get(id=building_id)
             except Building.DoesNotExist:

@@ -28,6 +28,9 @@ class ElevatorController(threading.Thread):
         self.redis_utils = RedisUtils()
         self.arr = [0] * (max-min+1)
 
+    def get_array(self):
+        return self.arr
+
     def update_running_staus(self, elevator_status,):
         elevator_status["running_status"] = self.running_status
         self.redis_utils.add_to_hash_map_set(self.elevator_id, elevator_status)

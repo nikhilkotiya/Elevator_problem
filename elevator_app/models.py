@@ -46,7 +46,7 @@ class Elevator(models.Model):
     number = models.IntegerField()
     current_floor = models.IntegerField(default=0)
     is_busy = models.BooleanField(default=False)
-    # is_operational = models.BooleanField(default=True)
+    is_operational = models.BooleanField(default=True)
     is_door_open = models.BooleanField(default=False)
     running_status = models.CharField(max_length=20, choices=[(status.value, status.name.title(
     )) for status in RunningStatus], default=RunningStatus.STANDING_STILL.value)
